@@ -1,0 +1,55 @@
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Toaster } from 'sonner';
+import { Layout } from './components/Layout';
+import { Dashboard } from './pages/Dashboard';
+import { Employees } from './pages/Employees';
+import { Setup } from './pages/Setup';
+import { TimeClock } from './pages/TimeClock';
+import { Reports } from './pages/Reports';
+import { TimeOff } from './pages/TimeOff';
+import { SchedulePlanner } from './pages/SchedulePlanner';
+import { Login } from './pages/Login';
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://swnpyjnxmwrtfvppssrf.supabase.co';
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN3bnB5am54bXdydGZ2cHBzc3JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1MDAzMDUsImV4cCI6MjA4OTA3NjMwNX0.qsrgQ48adY83JFAPFS3UPzQZDG3lO2TbxLRqNN3iOuk';
+
+export default function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const auth = localStorage.getItem('isAuthenticated');
+    if (auth === 'true') {
+      setIsAuthenticated(true);
+    }
+  }, []);
+
+  if (!supabaseUrl || !supabaseKey) {
+    return <Setup />;
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <>
+        <Toaster position="top-right" richColors />
+        <Login onLogin={() => setIsAuthenticated(true)} />
+      </>
+    );
+  }
+
+  return (
+    <BrowserRouter>
+      <Toaster position="top-right" richColors />
+      <Routes>
+        <Route path="/" element={<Layout onLogout={() => setIsAuthenticated(false)} />}>
+          <Route index element={<Dashboard />} />
+          <Route path="employees" element={<Employees />} />
+          <Route path="clock" element={<TimeClock />} />
+          <Route path="schedule" element={<SchedulePlanner />} />
+          <Route path="time-off" element={<TimeOff />} />
+          <Route path="reports" element={<Reports />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  );
+}

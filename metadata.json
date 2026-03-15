@@ -1,0 +1,5 @@
+{
+  "name": "StaffSync",
+  "description": "A modern staff management system to register employees, record daily working time, and view monthly statistics.",
+  "requestFramePermissions": []
+}
